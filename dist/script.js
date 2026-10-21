@@ -10,6 +10,10 @@ const state = Object.fromEntries(resources.map(({ id, start }) => [id, start]));
 state.development = 25;
 const grid = document.querySelector('#resource-grid');
 const toast = document.querySelector('#toast');
+const undoButton = document.querySelector('#undo-button');
+const redoButton = document.querySelector('#redo-button');
+const history = [];
+const future = [];
 let toastTimer;
 
 function renderResources() {
@@ -19,6 +23,7 @@ function renderResources() {
       <strong class="count" id="${id}-count">${state[id]}</strong>
       <span class="remaining">in the bank</span>
       <div class="resource-actions">
+        <button type="button" data-resource="${id}" data-change="1" aria-label="Add 1 ${label}">+1</button>
         <button type="button" data-resource="${id}" data-change="-1" aria-label="Subtract 1 ${label}">−1</button>
         <button type="button" data-resource="${id}" data-change="-2" aria-label="Subtract 2 ${label}">−2</button>
       </div>
@@ -30,6 +35,23 @@ function showError(message) {
   toast.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 4500);
+}
+
+function snapshot() {
+  return { ...state };
+}
+
+function renderCounts() {
+  resources.forEach(({ id }) => document.querySelector(`#${id}-count`).textContent = state[id]);
+  document.querySelector('#development-count').textContent = state.development;
+  undoButton.disabled = history.length === 0;
+  redoButton.disabled = future.length === 0;
+}
+
+function saveHistory(before) {
+  history.push(before);
+  if (history.length > 100) history.shift();
+  future.length = 0;
 }
 
 function update(changes) {
@@ -46,9 +68,10 @@ function update(changes) {
     return;
   }
 
+  const before = snapshot();
   Object.entries(changes).forEach(([resource, amount]) => state[resource] += amount);
-  resources.forEach(({ id }) => document.querySelector(`#${id}-count`).textContent = state[id]);
-  document.querySelector('#development-count').textContent = state.development;
+  saveHistory(before);
+  renderCounts();
 }
 
 const builds = {
@@ -70,9 +93,26 @@ document.querySelector('.build-grid').addEventListener('click', (event) => {
 
 document.querySelector('#reset-button').addEventListener('click', () => {
   if (!window.confirm('Reset every resource to 19 and development cards to 25?')) return;
+  const before = snapshot();
   resources.forEach(({ id }) => state[id] = 19);
   state.development = 25;
-  update({});
+  saveHistory(before);
+  renderCounts();
+});
+
+undoButton.addEventListener('click', () => {
+  if (!history.length) return;
+  future.push(snapshot());
+  Object.assign(state, history.pop());
+  renderCounts();
+});
+
+redoButton.addEventListener('click', () => {
+  if (!future.length) return;
+  history.push(snapshot());
+  Object.assign(state, future.pop());
+  renderCounts();
 });
 
 renderResources();
+renderCounts();

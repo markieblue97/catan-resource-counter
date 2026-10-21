@@ -19,7 +19,13 @@
             <h1>Catan Bank</h1>
             <p class="intro">Keep the shared bank honest while the island gets busy.</p>
           </div>
-          <button id="reset-button" class="reset-button" type="button">Reset bank</button>
+          <div class="bank-controls" aria-label="Bank controls">
+            <div class="history-controls">
+              <button id="undo-button" type="button" disabled>Undo</button>
+              <button id="redo-button" type="button" disabled>Redo</button>
+            </div>
+            <button id="reset-button" class="reset-button" type="button">Reset bank</button>
+          </div>
         </div>
       </header>
 
