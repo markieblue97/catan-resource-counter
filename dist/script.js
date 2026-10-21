@@ -32,19 +32,21 @@ function showError(message) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 4500);
 }
 
-function validate(resource) {
-  const max = resource === 'development' ? 25 : 19;
-  if (state[resource] < 0 || state[resource] > max) {
-    const label = resource === 'development' ? 'development cards' : resource;
-    showError(`Bank error: ${label} must stay between 0 and ${max}. Current count: ${state[resource]}.`);
-  }
-}
-
 function update(changes) {
-  Object.entries(changes).forEach(([resource, amount]) => {
-    state[resource] += amount;
-    validate(resource);
+  const invalidChange = Object.entries(changes).find(([resource, amount]) => {
+    const max = resource === 'development' ? 25 : 19;
+    return state[resource] + amount < 0 || state[resource] + amount > max;
   });
+
+  if (invalidChange) {
+    const [resource] = invalidChange;
+    const max = resource === 'development' ? 25 : 19;
+    const label = resource === 'development' ? 'Development cards' : resource[0].toUpperCase() + resource.slice(1);
+    showError(`Bank error: ${label} must stay between 0 and ${max}. That action was not applied.`);
+    return;
+  }
+
+  Object.entries(changes).forEach(([resource, amount]) => state[resource] += amount);
   resources.forEach(({ id }) => document.querySelector(`#${id}-count`).textContent = state[id]);
   document.querySelector('#development-count').textContent = state.development;
 }
