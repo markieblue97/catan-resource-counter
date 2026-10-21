@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A quick, tabletop-friendly Catan bank tracker." />
+    <title>Catan Bank Counter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="hero">
+        <p class="eyebrow">SETTLERS’ SUPPLY DEPOT</p>
+        <div class="hero-row">
+          <div>
+            <h1>Catan Bank</h1>
+            <p class="intro">Keep the shared bank honest while the island gets busy.</p>
+          </div>
+          <button id="reset-button" class="reset-button" type="button">Reset bank</button>
+        </div>
+      </header>
+
+      <section aria-labelledby="resources-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">RESOURCE BANK</p>
+            <h2 id="resources-heading">What’s left in the bank</h2>
+          </div>
+          <p class="bank-note">Each resource begins at <strong>19</strong>.</p>
+        </div>
+        <div id="resource-grid" class="resource-grid"></div>
+      </section>
+
+      <section class="build-section" aria-labelledby="build-heading">
+        <div class="section-heading build-heading">
+          <div>
+            <p class="eyebrow">RETURN BUILD COSTS</p>
+            <h2 id="build-heading">A player built something?</h2>
+          </div>
+          <p class="bank-note">Tap a piece to return its cost to the bank.</p>
+        </div>
+        <div class="build-grid">
+          <button class="build-button road" type="button" data-build="road">
+            <span class="build-icon">━</span><span><strong>Road</strong><small>+ lumber · + brick</small></span>
+          </button>
+          <button class="build-button settlement" type="button" data-build="settlement">
+            <span class="build-icon">⌂</span><span><strong>Settlement</strong><small>+ lumber · + brick · + wool · + grain</small></span>
+          </button>
+          <button class="build-button city" type="button" data-build="city">
+            <span class="build-icon">▦</span><span><strong>City</strong><small>+ 2 grain · + 3 ore</small></span>
+          </button>
+          <button class="build-button development" type="button" data-build="development">
+            <span class="build-icon">✦</span><span><strong>Development card</strong><small>+ wool · + grain · + ore · − 1 card</small></span>
+          </button>
+        </div>
+      </section>
+
+      <section class="development-card" aria-labelledby="development-heading">
+        <div>
+          <p class="eyebrow">SPECIAL RESOURCE</p>
+          <h2 id="development-heading">Development cards</h2>
+          <p>There are 25 cards in the bank at the start of the game.</p>
+        </div>
+        <div class="card-counter" aria-live="polite">
+          <span id="development-count">25</span>
+          <small>cards remaining</small>
+        </div>
+      </section>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="assertive" aria-atomic="true"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
